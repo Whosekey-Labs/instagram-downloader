@@ -2,7 +2,7 @@
 
 ## SocialSnag
 
-`src/lib/core.js`의 미디어 후보 선택, 캐러셀 변환과 `src/content.js`의 Instagram 웹 요청 구성은 SocialSnag의 구현을 참고하여 계정 단위 조회에 맞게 새로 작성했습니다. 전체 프로젝트를 포크하거나 런타임에 포함하지 않았습니다. 관련 MIT 고지를 보존합니다.
+`src/lib/core.js`의 미디어 후보 선택, 캐러셀 변환과 `src/lib/instagram.js`의 Instagram 웹 요청 구성은 SocialSnag의 구현을 참고하여 계정 단위 조회에 맞게 새로 작성했습니다. 전체 프로젝트를 포크하거나 런타임에 포함하지 않았습니다. 관련 MIT 고지를 보존합니다.
 
 - 원본: https://github.com/jamditis/socialsnag
 - 확인한 커밋: `6c2e93ffec38960c3d6cd98156b218be286566dd`

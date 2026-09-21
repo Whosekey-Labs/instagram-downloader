@@ -1,1 +1,23 @@
-<!doctype html><html lang="ko"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>개인정보처리방침 · Open Media Downloader</title><link rel="stylesheet" href="app.css"><body><main style="padding-top:50px;max-width:850px"><p class="eyebrow">OPEN MEDIA DOWNLOADER</p><h1 style="font-size:36px">개인정보처리방침</h1><p>시행일: 2026-09-22 · 버전 0.1.0</p><h2>처리 목적과 데이터</h2><p>입력한 계정명, 프로필, 게시물 설명, 미디어 주소와 썸네일을 목록 표시와 파일 저장을 위해 작업 탭의 메모리에서 처리합니다. 탭을 닫으면 목록은 사라집니다. 저장 완료 기록은 계정명·게시물 식별자·순번과 저장 시각으로 구성되며 중복 방지를 위해 Chrome 로컬 저장소에 최대 20,000건 보관합니다. 동기화 저장소는 사용하지 않습니다.</p><h2>네트워크와 로그인</h2><p>Instagram 탭에서 Instagram에 직접 조회하며, 미디어는 Instagram/Meta CDN에서 받습니다. 해당 서비스에 IP 주소와 브라우저 요청 정보가 전달됩니다. 로그인은 Instagram에서 직접 진행하며 브라우저가 기존 세션을 처리합니다. 확장은 비밀번호·인증 코드·쿠키 값을 읽거나 저장하지 않습니다.</p><p>개발자 수집 서버, 광고, 분석 도구, 추적, 원격 로그 전송이 없습니다. 데이터 판매, 제3자 광고 제공, AI 학습에 사용하지 않습니다. Instagram과 Chrome의 자체 데이터 처리에는 각 서비스 정책이 적용됩니다.</p><h2>권한</h2><p>downloads: 선택한 파일 저장 및 상태 확인. storage: 로컬 완료 기록. www.instagram.com 사이트 권한: 사용자가 요청한 프로필과 미디어 조회. 다른 사이트 페이지는 읽지 않습니다.</p><h2>삭제</h2><p>'이 확장의 저장 기록 지우기' 또는 확장 제거로 로컬 완료 기록을 삭제할 수 있습니다. 다운로드 파일과 Chrome 다운로드 기록은 별도로 삭제해야 합니다.</p><h2>문의</h2><p><a href="https://github.com/Whosekey-Labs/instagram-downloader/issues" target="_blank" rel="noopener">GitHub Issues</a> · 정책 변경 시 시행일과 버전을 갱신합니다.</p><p>Instagram 또는 Meta와 무관한 독립 프로젝트입니다.</p></main></body></html>
+<!doctype html><html lang="ko"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>개인정보처리방침 · Open Media Downloader</title><link rel="stylesheet" href="privacy.css"><body>
+<h1>개인정보처리방침</h1>
+<p>시행일: 2026-09-22 · Open Media Downloader 0.2.0</p>
+<p>이 확장은 Instagram 프로필 페이지에서 사용자가 선택한 범위의 사진과 동영상을 사용자의 컴퓨터에 저장하는 무료 오픈소스 프로그램입니다. Instagram 또는 Meta의 공식 제품이 아닙니다.</p>
+<h2>처리 데이터와 목적</h2>
+<p>- 현재 프로필 계정명과 페이지에 표시된 게시물 링크: 안내 표시와 현재 화면/전체 수집 대상을 결정하기 위해 페이지 메모리에서 처리합니다.</p>
+<p>- 게시물 내용, 사진·영상 주소: 사용자가 다운로드를 시작한 뒤 Instagram에 직접 조회하여 파일을 저장합니다. 프로필을 벗어나거나 새로고침하면 수집 목록이 사라집니다.</p>
+<p>- 완료 기록: 계정명·게시물 코드·파일 순번을 조합한 키와 저장 시각을 chrome.storage.local에 최대 20,000건 보관해 중복을 건너뜁니다. Chrome 동기화 저장소는 사용하지 않습니다.</p>
+<p>- 임시 작업 기록: 다운로드 ID, 탭/문서/작업 식별자, 계정명, 파일 식별자와 상태를 chrome.storage.session에 보관합니다. 워커 재시작 후 상태와 작업 소유권을 확인하기 위한 용도입니다. 완료 상태는 최대 200건이며 브라우저 세션 종료 시 지워집니다. 미디어 URL·쿠키 값은 이 기록에 보관하지 않습니다.</p>
+<p>- 다운로드 파일과 Chrome 다운로드 기록: 브라우저가 사용자의 컴퓨터에 보관합니다.</p>
+<h2>네트워크 및 로그인</h2>
+<p>사용자가 다운로드 또는 전체 수집을 시작할 때 Instagram 탭에서 Instagram에 직접 요청하고, 파일은 Instagram/Meta CDN에서 받습니다. 해당 서비스에 IP 주소와 브라우저 요청 정보가 전달됩니다. 로그인은 Instagram 웹사이트에서 직접 처리하고 브라우저가 기존 세션을 사용합니다. 확장은 비밀번호·인증 코드·쿠키 값을 읽거나 저장하지 않습니다.</p>
+<p>개발자 수집 서버, 광고, 추적/분석 도구, 원격 로그 전송, 데이터 판매, 제3자 광고 제공 및 AI 학습이 없습니다. Instagram과 Chrome 자체 데이터 처리에는 각 서비스 정책이 적용됩니다.</p>
+<h2>권한</h2>
+<p>- downloads: 선택한 미디어 저장 및 이 확장이 시작한 다운로드의 상태 확인/취소.</p>
+<p>- storage: 로컬 완료 기록 및 임시 작업 상태 보관.</p>
+<p>- https://www.instagram.com/*: 프로필 페이지에 안내 표시, 게시물 링크 수집 및 사용자 요청에 따른 미디어 조회. 다른 사이트의 페이지를 읽지 않습니다.</p>
+<h2>삭제</h2>
+<p>전체 다운로드 옵션 아래 &#x27;이 계정의 저장 기록 지우기&#x27;로 현재 계정의 완료 기록을 지울 수 있습니다. 확장을 제거하면 확장의 로컬 기록이 삭제됩니다. 브라우저를 종료하면 세션 작업 기록이 지워집니다. 다운로드 파일과 Chrome 다운로드 기록은 별도로 삭제해야 합니다.</p>
+<h2>문의</h2>
+<p>https://github.com/Whosekey-Labs/instagram-downloader/issues</p>
+<p>정책 변경 시 시행일과 버전을 갱신합니다.</p>
+</body></html>

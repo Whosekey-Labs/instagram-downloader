@@ -11,4 +11,4 @@ jobs:
         with:
           node-version: '22'
       - name: 테스트 및 출시 패키지 검증
-        run: npm run package
+        run: npm ci && npm run package

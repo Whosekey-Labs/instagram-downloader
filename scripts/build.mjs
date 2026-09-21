@@ -1,9 +1,13 @@
 import { mkdir, cp, readFile, writeFile, rm } from 'node:fs/promises';
 import { deflateSync } from 'node:zlib';
+import { build } from 'esbuild';
 
 await rm('dist', {recursive:true, force:true});
 await mkdir('dist/icons', {recursive:true});
-await cp('src', 'dist', {recursive:true});
+await build({entryPoints:['src/content.js'],outfile:'dist/content.js',bundle:true,format:'iife',target:'chrome120',legalComments:'inline'});
+await build({entryPoints:['src/background.js'],outfile:'dist/background.js',bundle:true,format:'esm',target:'chrome120',legalComments:'inline'});
+await cp('src/privacy.html','dist/privacy.html');
+await cp('src/privacy.css','dist/privacy.css');
 await cp('manifest.json', 'dist/manifest.json');
 await cp('LICENSE', 'dist/LICENSE');
 await cp('THIRD_PARTY_NOTICES.md', 'dist/THIRD_PARTY_NOTICES.md');

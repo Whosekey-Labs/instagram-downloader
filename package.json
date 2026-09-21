@@ -1,6 +1,6 @@
 {
   "name": "open-media-downloader",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
   "description": "무료 오픈소스 Instagram 계정 미디어 다운로드 확장",
@@ -9,8 +9,14 @@
     "test": "node --test tests/*.test.js",
     "build": "node scripts/build.mjs",
     "check": "node scripts/check.mjs",
-    "preview": "node scripts/preview.mjs",
-    "package": "npm test && npm run build && npm run check && node scripts/package.mjs"
+    "package": "npm test && npm run build && npm run check && node scripts/package.mjs",
+    "test:ui": "node scripts/preview.mjs"
   },
-  "engines": {"node": ">=22"}
+  "engines": {
+    "node": "^22.13.0 || >=24.0.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.2",
+    "jsdom": "^29.1.1"
+  }
 }
