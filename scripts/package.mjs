@@ -1,0 +1,12 @@
+import {execFileSync} from 'node:child_process';
+import {readFile,mkdir,writeFile,rm} from 'node:fs/promises';
+import {createHash} from 'node:crypto';
+const version=JSON.parse(await readFile('manifest.json','utf8')).version;
+await mkdir('release',{recursive:true});
+const output=`release/open-media-downloader-${version}.zip`;
+await rm(output,{force:true});
+execFileSync('zip',['-qrX',`../${output}`,'.'],{cwd:'dist'});
+execFileSync('unzip',['-t',output]);
+const hash=createHash('sha256').update(await readFile(output)).digest('hex');
+await writeFile(`${output}.sha256`,`${hash}  open-media-downloader-${version}.zip\n`);
+console.log(`스토어 및 로컬 설치 ZIP 생성: ${output}\nSHA-256: ${hash}`);
