@@ -21,4 +21,5 @@
 - [x] `scripts/build.mjs`, `check.mjs`, `package.mjs`, `preview.mjs`로 재현 가능한 빌드 및 검증. 개발용 미리보기는 출시 패키지에서 제외.
 - [x] `README.md`, `PRIVACY.md`, `THIRD_PARTY_NOTICES.md`, `docs/research.md`, `store/listing.md`와 스토어 이미지 준비.
 - [ ] 자동 검사와 브라우저 UI 검증, 사용자 제공 `@meta` 실서비스 접근 확인. 로컬 설치 및 Google 재인증의 남은 작업 기록.
-- [ ] 공개 저장소와 GitHub Release 배포, 개인정보처리방침 URL 확보. 개발자 대시보드 상태에 따라 심사 제출 또는 정확한 차단 단계 기록.
+- [x] 공개 저장소와 GitHub Release 배포, 개인정보처리방침 URL 확보. 대시보드의 정확한 차단 단계 기록.
+- [ ] 사용자 게시자 선언·연락처·조직 인증 완료 후 확장 업로드 및 실제 심사 접수.

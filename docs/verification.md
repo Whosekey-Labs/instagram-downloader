@@ -36,4 +36,5 @@ Node.js 내장 테스트 16개 통과: 입력 및 URL 검증, 후보 해상도 �
 - 로컬 테스트 릴리스: https://github.com/Whosekey-Labs/instagram-downloader/releases/tag/v0.1.0
 - 공개 ZIP의 SHA-256과 로컬 ZIP의 SHA-256 일치: `db3e53382741a3451fe4b67e7ce15a19b45e8046e6c90fc0669279304fda7b2f`
 - GitHub 자동 검사 통과: https://github.com/Whosekey-Labs/instagram-downloader/actions/runs/35627263270
-- GitHub Pages 문서/개인정보처리방침 배포를 설정했으며 별도 페이지 응답을 확인한다.
+- GitHub Pages 배포 성공 및 공개 개인정보처리방침 실제 브라우저 응답 확인: https://whosekey-labs.github.io/instagram-downloader/privacy.html
+- 자동 브라우저 도구의 `chrome://extensions` 접근이 URL 보안 정책으로 거절됨. 우회 설치를 시도하지 않았으며 사용자 로컬 설치가 필요함.
