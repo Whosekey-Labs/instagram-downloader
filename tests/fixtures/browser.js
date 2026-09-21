@@ -17,8 +17,9 @@ globalThis.chrome={runtime:{id:'fixture',onMessage:{addListener:()=>{},removeLis
 }}};
 const originalFetch=globalThis.fetch;
 globalThis.fetch=async(path,options)=>{
+ if(String(path).includes('web_profile_info'))throw new Error('회귀: 프로필 개수 API 호출');
  if(!String(path).startsWith('/api/v1/'))return originalFetch(path,options);
  const code='B'+'ABCDEFGHI'[Number(String(path).match(/media\/(\d+)/)?.[1]||64)-64];
- const data=String(path).includes('web_profile_info')?{data:{user:{username:profileName,edge_owner_to_timeline_media:{count:9}}}}:{items:[{code,media_type:1,image_versions2:{candidates:[{url:'https://fixture.cdninstagram.com/photo.jpg',width:1080,height:1350}]}}]};
+ const data={items:[{code,media_type:1,image_versions2:{candidates:[{url:'https://fixture.cdninstagram.com/photo.jpg',width:1080,height:1350}]}}]};
  return {ok:true,status:200,redirected:false,url:'https://www.instagram.com/api/',headers:new Headers({'content-type':'application/json'}),json:async()=>data};
 };

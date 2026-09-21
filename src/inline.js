@@ -1,4 +1,8 @@
-import {profileFromPath,readPosts,collectAll,waitFor} from './lib/page.js';
+import {profileFromPath,readPosts,readProfilePostCount} from './lib/page.js';
+import {collectAll} from './lib/post-collection.js';
+import {downloadPosts} from './lib/post-download.js';
+import {saveMediaThroughExtension} from './lib/browser-download.js';
+import {waitFor} from './lib/async.js';
 import {InstagramClient} from './lib/instagram.js';
 import {panelStyle} from './panel-style.js';
 import {parseDownloadCount,DEFAULT_DOWNLOAD_COUNT} from './lib/preferences.js';
@@ -87,39 +91,24 @@ export function mountInline({window,api,client=new InstagramClient()}) {
       }
     }
     async function download(posts,signal) {
-      if(!posts.length)throw new Error('현재 화면에서 다운로드할 게시물을 찾지 못했습니다. 게시물 그리드로 이동해 주세요.');
       state.partial=[];controls();
-      let saved=0,skipped=0,warning='';
       const progress=$('progress');progress.hidden=false;progress.max=posts.length;progress.value=0;
-      for(let index=0;index<posts.length;index++) {
-        signal.throwIfAborted();
-        if(profileFromPath(window.location.pathname)!==username)throw new Error('다른 페이지로 이동해 다운로드를 중단했습니다.');
-        status(`게시물 ${index+1}/${posts.length} 확인 중 · 저장 ${saved}개 · 중복 ${skipped}개`);
-        const media=await client.media(posts[index],username,signal);
-        for(const item of media) {
-          signal.throwIfAborted();
-          const started=await message({type:'OM_START',token:state.token,item});
-          if(started.skipped){skipped++;continue;}
-          const began=Date.now();
-          while(true){
-            signal.throwIfAborted();
-            const result=await message({type:'OM_STATUS',token:state.token,id:started.id});
-            if(result.state==='complete'){saved++;warning=result.warning||warning;break;}
-            if(result.state==='interrupted')throw new Error(`${result.error} (저장 ${saved}개, 중복 ${skipped}개)`);
-            if(Date.now()-began>180000){await message({type:'OM_CANCEL',token:state.token});throw new Error('파일 저장 시간이 초과되어 중단했습니다.');}
-            status(`파일 저장 중 · 게시물 ${index+1}/${posts.length} · 저장 ${saved}개 · 중복 ${skipped}개`);
-            await waitFor(700,signal);
-          }
+      const result=await downloadPosts({
+        posts,signal,
+        isCurrentProfile:()=>profileFromPath(window.location.pathname)===username,
+        resolveMedia:post=>client.media(post,username,signal),
+        saveMedia:(item,onPending)=>saveMediaThroughExtension({message,item,token:state.token,signal,onPending}),
+        onProgress:({phase,postIndex,postCount,saved,skipped})=>{
+          if(phase==='saved')progress.value=postIndex;
+          else status(`${phase==='resolving'?'게시물 확인 중':'파일 저장 중'} · ${postIndex}/${postCount} · 저장 ${saved}개 · 중복 ${skipped}개`);
         }
-        progress.value=index+1;
-        if(index<posts.length-1)await waitFor(1000,signal);
-      }
-      status(`저장 완료 · ${saved}개 저장, ${skipped}개 중복 건너뜀.${warning?` ${warning}`:''}`);
+      });
+      status(`저장 완료 · ${result.saved}개 저장, ${result.skipped}개 중복 건너뜀.${result.warning?` ${result.warning}`:''}`);
     }
     $('#visible').onclick=()=>{const posts=read(true);run(signal=>download(posts,signal));};
     async function collectAndDownload(signal,limit=null){
       state.partial=[];$('progress').hidden=true;status(limit===null?'전체 게시물 수를 확인하고 있습니다…':`${limit}개 게시물 수집을 준비하고 있습니다…`);
-      const expected=await client.count(username,signal);
+      const expected=readProfilePostCount(document);
       if(expected===0){status('이 계정에 게시물이 없습니다.');return;}
       window.scrollTo({top:0,behavior:'instant'});
       await waitFor(1000,signal);

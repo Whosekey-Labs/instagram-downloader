@@ -15,6 +15,7 @@ async function check(dir) {
     else if(file.name.endsWith('.js')) {
       execFileSync(process.execPath,['--check',name]);
       const text=await readFile(name,'utf8');
+      if(name.startsWith('dist'+path.sep))assert.ok(!text.includes('web_profile_info'),'금지된 프로필 개수 조회가 배포 파일에 포함됨');
       assert.ok(!/\beval\(|new Function\(/.test(text),name);
     }
   }
@@ -23,4 +24,9 @@ await check('dist');
 await check('src');
 await check('scripts');
 await check('tests');
+for(const file of ['post-collection.js','post-download.js']){
+  const source=await readFile(path.join('src/lib',file),'utf8');
+  assert.ok(!/\b(?:window|document|chrome|fetch|XMLHttpRequest)\b/.test(source),`${file}: 공통 실행 모듈에 브라우저 의존성이 포함됨`);
+}
+assert.ok(!/\bfetch\s*\(|new\s+XMLHttpRequest/.test(await readFile('src/inline.js','utf8')),'UI에서 직접 네트워크를 요청함');
 console.log('Manifest V3, 최소 권한, 파일 누락, JavaScript 문법 검사 통과');

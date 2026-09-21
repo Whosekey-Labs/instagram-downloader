@@ -1,7 +1,8 @@
+import {collectAll} from '../src/lib/post-collection.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { JSDOM } from 'jsdom';
-import { profileFromPath, readPosts, shortcodeToId, collectAll } from '../src/lib/page.js';
+import { profileFromPath, readPosts, shortcodeToId } from '../src/lib/page.js';
 
 test('프로필 게시물 탭에서만 계정을 인식한다',()=>{
   assert.equal(profileFromPath('/meta/'),'meta');

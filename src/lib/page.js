@@ -1,10 +1,19 @@
 import { parseUsername } from './core.js';
-import {parseDownloadCount} from './preferences.js';
 
 export function profileFromPath(pathname) {
   const parts=pathname.split('/').filter(Boolean);
   if(parts.length!==1)return null;
   try{return parseUsername(parts[0]);}catch{return null;}
+}
+
+export function readProfilePostCount(document){
+  const header=document.querySelector('main header,[role="main"] header');
+  if(!header)return null;
+  const text=(header.innerText||header.textContent||'').replace(/\s+/g,' ').trim();
+  const match=text.match(/(?:^|\s)게시물\s*([0-9][0-9,]*)(?=\s|$)/)||text.match(/(?:^|\s)([0-9][0-9,]*)\s+posts?(?=\s|$)/i);
+  if(!match||!(/^(?:\d+|\d{1,3}(?:,\d{3})+)$/.test(match[1])))return null;
+  const count=Number(match[1].replaceAll(',',''));
+  return Number.isSafeInteger(count)?count:null;
 }
 
 export function shortcodeToId(code) {
@@ -36,35 +45,4 @@ export function readPosts(document,{visibleOnly=true,width=Infinity,height=Infin
     if(!posts.has(match[2]))posts.set(match[2],{code:match[2],kind:match[1],url:url.href});
   }
   return [...posts.values()];
-}
-
-export function waitFor(ms,signal) {
-  return new Promise((resolve,reject)=>{
-    signal.throwIfAborted();
-    const abort=()=>{clearTimeout(timer);reject(signal.reason);};
-    const timer=setTimeout(()=>{signal.removeEventListener('abort',abort);resolve();},ms);
-    signal.addEventListener('abort',abort,{once:true});
-  });
-}
-
-export async function collectAll({read,scroll,atBottom,blocked,wait=waitFor,signal,expected,onProgress,maxSteps=1800,limit=null}) {
-  const target=limit===null?null:parseDownloadCount(limit);
-  const posts=new Map();let idle=0;
-  for(let step=0;step<maxSteps;step++) {
-    signal.throwIfAborted();
-    if(blocked())throw new Error('Instagram 로그인 또는 접근 확인 화면이 나타나 전체 수집을 중단했습니다.');
-    const before=posts.size;
-    for(const post of read()){
-      posts.set(post.code,post);
-      if(target!==null&&posts.size>=target)break;
-    }
-    onProgress(posts.size);
-    if(target!==null&&posts.size>=target)return {posts:[...posts.values()],complete:true,reason:'requested'};
-    if(Number.isInteger(expected)&&expected>=0&&posts.size>=expected&&(expected===0||atBottom()))return {posts:[...posts.values()],complete:true,reason:'count'};
-    if(posts.size===before&&atBottom())idle++;else idle=0;
-    if(idle>=6)return {posts:[...posts.values()],complete:false,reason:'stalled'};
-    scroll();
-    await wait(1000,signal);
-  }
-  return {posts:[...posts.values()],complete:false,reason:'limit'};
 }

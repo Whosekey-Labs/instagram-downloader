@@ -1,4 +1,4 @@
-import {classifyResponse,normalizePage,parseUsername} from './core.js';
+import {classifyResponse,normalizePage} from './core.js';
 import {shortcodeToId} from './page.js';
 
 export class InstagramClient {
@@ -20,14 +20,6 @@ export class InstagramClient {
       if(error.name==='AbortError')throw new Error('Instagram 응답 시간이 초과되었습니다. 자동 재시도하지 않았습니다.');
       throw error;
     }finally{clearTimeout(timer);signal.removeEventListener('abort',abort);}
-  }
-  async count(username,signal) {
-    const name=parseUsername(username);
-    const result=await this.json(`/api/v1/users/web_profile_info/?username=${encodeURIComponent(name)}`,signal);
-    const user=result?.data?.user;
-    if(String(user?.username).toLowerCase()!==name)throw new Error('현재 프로필과 응답 계정이 일치하지 않습니다.');
-    const count=user.edge_owner_to_timeline_media?.count ?? user.media_count;
-    return Number.isInteger(count)&&count>=0?count:null;
   }
   async media(post,username,signal) {
     const data=await this.json(`/api/v1/media/${shortcodeToId(post.code)}/info/`,signal);

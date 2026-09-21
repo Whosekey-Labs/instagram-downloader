@@ -8,7 +8,7 @@
 
 ## 설치
 
-1. [v0.3.1 ZIP](https://github.com/Whosekey-Labs/instagram-downloader/releases/tag/v0.3.1)을 내려받아 압축을 풉니다.
+1. [v0.3.2 ZIP](https://github.com/Whosekey-Labs/instagram-downloader/releases/tag/v0.3.2)을 내려받아 압축을 풉니다.
 2. Chrome의 `chrome://extensions`에서 **개발자 모드**를 켭니다.
 3. **압축해제된 확장 프로그램 로드**로 `manifest.json`이 있는 폴더를 선택합니다.
 4. Instagram 탭을 새로고침하고 원하는 계정의 **게시물 탭**으로 이동합니다.
@@ -37,7 +37,7 @@
 
 ## 전체 수집이 확인되지 않는 경우
 
-Instagram이 알려준 프로필 게시물 수와 모은 게시물 수를 비교합니다. 추가 로딩이 멈추거나 전체 개수를 알 수 없는 경우, 자동으로 전체 완료라고 표시하지 않습니다. **모인 N개 게시물만 저장**을 별도로 선택할 수 있습니다. 전체 수집은 최대 1,800회의 스크롤 확인 단계로 제한하며, 한도 도달 시에도 부분 수집으로 표시합니다.
+프로필 헤더에 화면으로 표시된 정확한 게시물 수와 모은 수를 비교합니다. 개수를 확인하기 위한 별도 프로필 API는 호출하지 않습니다. 추가 로딩이 멈추거나 전체 개수를 알 수 없는 경우, 자동으로 전체 완료라고 표시하지 않습니다. **모인 N개 게시물만 저장**을 별도로 선택할 수 있습니다. 전체 수집은 최대 1,800회의 스크롤 확인 단계로 제한하며, 한도 도달 시에도 부분 수집으로 표시합니다.
 
 로그인·접근 확인 화면, 401/403/429 또는 챌린지 응답에서는 자동 재시도하지 않습니다. Instagram 웹사이트에서 직접 로그인/확인한 뒤 다시 실행하세요. 확장에 비밀번호를 입력하지 않습니다.
 
@@ -75,7 +75,10 @@ npm run package
 src/content.js              Instagram 페이지 내 확장 진입점
 src/inline.js               안내·현재 화면 저장·전체 스크롤·중단 흐름
 src/panel-style.js          페이지와 분리된 안내 UI 스타일
-src/lib/page.js             프로필/게시물 선택·스크롤 수집
+src/lib/page.js             화면의 프로필 개수/게시물 링크 읽기
+src/lib/post-collection.js  스크롤 수집과 범위 판단
+src/lib/post-download.js    모든 모드가 사용하는 공통 다운로드
+src/lib/browser-download.js 저장 요청 및 완료 대기
 src/lib/instagram.js        해당 게시물의 실제 미디어 조회
 src/lib/download-service.js 다운로드 소유권·완료·중복·취소
 src/background.js          Chrome 다운로드 API와 도구 모음 연결
@@ -86,3 +89,5 @@ src/background.js          Chrome 다운로드 API와 도구 모음 연결
 오류 보고에는 버전, 오류 문구와 재현 단계를 포함하세요. 비밀번호·쿠키·인증 코드·서명 URL·비공개 콘텐츠는 공개 이슈에 올리지 마세요. 변경 후 `npm run package`로 검사합니다.
 
 MIT 라이선스 · [참고 오픈소스](THIRD_PARTY_NOTICES.md) · [조사](docs/research.md) · [스토어 제출 상태](store/submission.md)
+
+코드 의존성과 수정 원칙: [다운로드 구조](docs/ARCHITECTURE.md)

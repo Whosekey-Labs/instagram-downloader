@@ -4,8 +4,8 @@ import {JSDOM} from 'jsdom';
 import {mountInline} from '../src/inline.js';
 
 const waitUntil=async(predicate)=>{for(let i=0;i<120;i++){if(predicate())return;await new Promise(r=>setTimeout(r,25));}assert.fail('예상 화면 상태에 도달하지 못함');};
-function setup({defaultCount=20,mediaPerPost=1}={}){
-  const dom=new JSDOM('<main><header>Meta</header><a href="/meta/p/BA/"><img></a><a href="/meta/p/BB/"><img></a></main>',{url:'https://www.instagram.com/meta/'});
+function setup({defaultCount=20,mediaPerPost=1,rejectProfileCount=false}={}){
+  const dom=new JSDOM('<main><header>Meta 게시물 2</header><a href="/meta/p/BA/"><img></a><a href="/meta/p/BB/"><img></a></main>',{url:'https://www.instagram.com/meta/'});
   const {window}=dom;let scrolls=0,countCalls=0;const resolved=[],messages=[],preferences={downloadCount:defaultCount};
   window.scrollTo=()=>scrolls++;window.scrollBy=()=>scrolls++;
   window.document.querySelectorAll('a').forEach((a,i)=>{a.getBoundingClientRect=()=>({top:i?1800:100,bottom:i?2000:300,left:0,right:200,width:200,height:200});});
@@ -15,7 +15,7 @@ function setup({defaultCount=20,mediaPerPost=1}={}){
     if(message.type==='OM_SAVE_SETTINGS'){preferences.downloadCount=message.downloadCount;return {...preferences};}
     return message.type==='OM_START'?{id:1}:message.type==='OM_STATUS'?{state:'complete'}:{ok:true};
   }}};
-  const client={count:async()=>{countCalls++;return 2;},media:async post=>{resolved.push(post.code);return Array.from({length:mediaPerPost},(_,i)=>({id:`meta:${post.code}:${i+1}`,username:'meta',code:post.code,index:i+1,type:'image',url:'https://s.cdninstagram.com/a.jpg'}));}};
+  const client={count:async()=>{countCalls++;if(rejectProfileCount)throw new Error('429 프로필 개수 API는 호출하면 안 됩니다.');return 2;},media:async post=>{resolved.push(post.code);return Array.from({length:mediaPerPost},(_,i)=>({id:`meta:${post.code}:${i+1}`,username:'meta',code:post.code,index:i+1,type:'image',url:'https://s.cdninstagram.com/a.jpg'}));}};
   const mounted=mountInline({window,api,client});
   return {window,mounted,resolved,messages,preferences,stats:()=>({scrolls,countCalls}),root:()=>window.document.querySelector('#open-media-inline')?.shadowRoot,close:()=>{mounted.dispose();window.close();}};
 }
@@ -86,3 +86,17 @@ test('게시물 한 개를 지정해도 묶음 게시물의 모든 파일을 저
     assert.match(s.root().querySelector('.status').textContent,/3개 저장/);
   }finally{s.close();}
 });
+
+for(const [button,expected] of [['#visible',['BA']],['#limited',['BA']],['#all',['BA','BB']]]){
+  test(`${button} 경로는 프로필 개수 API 없이 같은 미디어 조회와 저장을 사용한다`,async()=>{
+    const s=setup({defaultCount:1,rejectProfileCount:true});try{
+      await waitUntil(()=>s.root().querySelector('#post-count')?.disabled===false);
+      s.root().querySelector(button).click();
+      await waitUntil(()=>/저장 완료|429/.test(s.root().querySelector('.status').textContent));
+      assert.match(s.root().querySelector('.status').textContent,/저장 완료/);
+      assert.equal(s.stats().countCalls,0);
+      assert.deepEqual(s.resolved,expected);
+      assert.equal(s.messages.filter(m=>m.type==='OM_START').length,expected.length);
+    }finally{s.close();}
+  });
+}
