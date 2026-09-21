@@ -4,7 +4,7 @@
 
 ## 자동 검사
 
-Node.js 내장 테스트: 입력 및 URL 검증, 후보 해상도 선택, 혼합 캐러셀, 영상 누락 처리, 응답 형식 및 페이지 커서 검증, 인증/429 실패, 콘텐츠 스크립트 발신자 검증, 순차 다운로드 완료·취소·중복·기록 실패 처리.
+Node.js 내장 테스트 16개 통과: 입력 및 URL 검증, 후보 해상도 선택, 혼합 캐러셀, 영상 누락 처리, 응답 형식 및 페이지 커서 검증, 인증/429 실패, 콘텐츠 스크립트 발신자 검증, 순차 다운로드 완료·취소·중복·기록 실패 처리.
 
 빌드 검사: Manifest V3, 권한 최소화, 모든 파일 참조, JavaScript 구문, 원격 실행 코드 없음. ZIP 무결성 및 SHA-256 생성.
 
@@ -29,3 +29,11 @@ Node.js 내장 테스트: 입력 및 URL 검증, 후보 해상도 선택, 혼합
 - Chrome 웹스토어 ZIP 업로드, 심사 접수 및 승인: 미완료.
 
 실파일 검증이 끝나기 전 공개 릴리스는 테스트용 prerelease로 표기합니다.
+
+## 공개 배포
+
+- 공개 저장소: https://github.com/Whosekey-Labs/instagram-downloader
+- 로컬 테스트 릴리스: https://github.com/Whosekey-Labs/instagram-downloader/releases/tag/v0.1.0
+- 공개 ZIP의 SHA-256과 로컬 ZIP의 SHA-256 일치: `db3e53382741a3451fe4b67e7ce15a19b45e8046e6c90fc0669279304fda7b2f`
+- GitHub 자동 검사 통과: https://github.com/Whosekey-Labs/instagram-downloader/actions/runs/35627263270
+- GitHub Pages 문서/개인정보처리방침 배포를 설정했으며 별도 페이지 응답을 확인한다.
