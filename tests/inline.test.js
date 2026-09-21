@@ -100,3 +100,14 @@ for(const [button,expected] of [['#visible',['BA']],['#limited',['BA']],['#all',
     }finally{s.close();}
   });
 }
+
+test('50개를 요청해도 게시물이 2개인 계정은 있는 2개만 공통 경로로 저장한다',async()=>{
+  const s=setup({defaultCount:50,rejectProfileCount:true});try{
+    await waitUntil(()=>s.root().querySelector('#post-count')?.disabled===false);
+    s.root().querySelector('#limited').click();
+    await waitUntil(()=>s.root().querySelector('.status').textContent.includes('저장 완료'));
+    assert.deepEqual(s.resolved,['BA','BB']);
+    assert.equal(s.messages.filter(m=>m.type==='OM_START').length,2);
+    assert.equal(s.stats().countCalls,0);
+  }finally{s.close();}
+});

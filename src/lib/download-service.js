@@ -11,10 +11,15 @@ export class DownloadService {
     for(const [id] of finished.slice(0,Math.max(0,finished.length-200)))delete jobs[id];
     await this.api.storage.session.set({jobs});
   }
-  owner(sender){
-    let url;try{url=new URL(sender.url);}catch{throw new Error('허용되지 않은 요청입니다.');}
+  async owner(sender){
+    let source;try{source=new URL(sender.url);}catch{throw new Error('허용되지 않은 요청입니다.');}
+    if(sender.id!==this.api.runtime.id||sender.frameId!==0||!Number.isInteger(sender.tab?.id)||source.origin!=='https://www.instagram.com')throw new Error('Instagram에서만 작업할 수 있습니다.');
+    let currentTab;
+    try{currentTab=await this.api.tabs.get(sender.tab.id);}catch{throw new Error('현재 탭을 확인할 수 없습니다. 계정 페이지에서 다시 시작해 주세요.');}
+    let url;try{url=new URL(currentTab.url);}catch{throw new Error('현재 탭 주소를 확인할 수 없습니다.');}
+    if(url.origin!=='https://www.instagram.com')throw new Error('Instagram 계정 페이지에서 다시 시작해 주세요.');
+    // SPA 이동 후에도 메시지의 이전 주소가 아닌 현재 탭 주소로 계정을 검증한다.
     const username=profileFromPath(url.pathname);
-    if(sender.id!==this.api.runtime.id||sender.frameId!==0||!Number.isInteger(sender.tab?.id)||url.origin!=='https://www.instagram.com')throw new Error('Instagram에서만 작업할 수 있습니다.');
     return {tabId:sender.tab.id,documentId:sender.documentId||'',username};
   }
   matches(job,owner,token){return job.tabId===owner.tabId&&job.documentId===owner.documentId&&job.token===token;}
@@ -40,7 +45,7 @@ export class DownloadService {
   }
   changed(id){return this.serial(async()=>{const jobs=await this.jobs();if(jobs[id])await this.refresh(id,jobs);});}
   handle(message,sender){return this.serial(async()=>{
-    const owner=this.owner(sender);
+    const owner=await this.owner(sender);
     if(message.type==='OM_GET_SETTINGS'){
       const {preferences}=await this.api.storage.local.get('preferences');
       let downloadCount=DEFAULT_DOWNLOAD_COUNT;
@@ -65,7 +70,8 @@ export class DownloadService {
     if(message.type==='OM_START'){
       if(!owner.username)throw new Error('계정 프로필에서만 다운로드를 시작할 수 있습니다.');
       const item=message.item;
-      if(!item||item.username!==owner.username||!/^[A-Za-z0-9_-]{1,80}$/.test(item.code)||!Number.isInteger(item.index)||item.index<1||item.index>100||!['image','video'].includes(item.type)||item.id!==`${owner.username}:${item.code}:${item.index}`)throw new Error('현재 계정과 다운로드 파일 정보가 일치하지 않습니다.');
+      if(item?.username!==owner.username)throw new Error('현재 탭의 계정과 다운로드 대상이 다릅니다. 현재 계정에서 다시 시작해 주세요.');
+      if(!item||!/^[A-Za-z0-9_-]{1,80}$/.test(item.code)||!Number.isInteger(item.index)||item.index<1||item.index>100||!['image','video'].includes(item.type)||item.id!==`${owner.username}:${item.code}:${item.index}`)throw new Error('다운로드 파일의 게시물 코드 또는 순번이 올바르지 않습니다.');
       validateMediaUrl(item.url);
       const history=(await this.api.storage.local.get('completed')).completed||{};
       if(history[item.id])return {skipped:true};

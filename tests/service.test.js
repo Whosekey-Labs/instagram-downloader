@@ -5,10 +5,10 @@ const sender={id:'ext',frameId:0,url:'https://www.instagram.com/meta/',tab:{id:7
 const item={id:'meta:BA:1',username:'meta',code:'BA',index:1,type:'image',url:'https://s.cdninstagram.com/a.jpg'};
 const token='job-123456789';
 function setup(){
-  const local={},session={};let state='in_progress',cancelled=0,started=0;
+  const local={},session={};let state='in_progress',cancelled=0,started=0,currentUrl=sender.url;
   const area=store=>({get:async key=>({[key]:structuredClone(store[key])}),set:async value=>Object.assign(store,structuredClone(value))});
-  const api={runtime:{id:'ext'},storage:{local:area(local),session:area(session)},downloads:{download:async()=>++started,search:async()=>[{state,mime:'image/jpeg'}],cancel:async()=>cancelled++}};
-  return {service:new DownloadService(api),api,local,session,setState:value=>state=value,counts:()=>({cancelled,started})};
+  const api={runtime:{id:'ext'},tabs:{get:async id=>({id,url:currentUrl})},storage:{local:area(local),session:area(session)},downloads:{download:async()=>++started,search:async()=>[{state,mime:'image/jpeg'}],cancel:async()=>cancelled++}};
+  return {service:new DownloadService(api),api,local,session,setState:value=>state=value,setTabUrl:value=>currentUrl=value,counts:()=>({cancelled,started})};
 }
 test('다운로드 시작과 실제 완료를 구분하고 워커 재시작 후 기록을 복원한다',async()=>{
   const s=setup();const start=await s.service.handle({type:'OM_START',token,item},sender);
@@ -66,4 +66,23 @@ test('기록 삭제는 저장한 기본 개수를 지우지 않는다',async()=>
   const s=setup();await s.service.handle({type:'OM_SAVE_SETTINGS',downloadCount:25},sender);
   await s.service.handle({type:'OM_CLEAR'},sender);
   assert.equal((await s.service.handle({type:'OM_GET_SETTINGS'},sender)).downloadCount,25);
+});
+
+test('계정 이동 후 발신 URL이 이전 계정이어도 현재 탭 계정의 파일을 저장한다',async()=>{
+  const s=setup();s.setTabUrl('https://www.instagram.com/yoon_forest_fruit/');
+  const next={...item,username:'yoon_forest_fruit',id:'yoon_forest_fruit:BA:1'};
+  const result=await s.service.handle({type:'OM_START',token,item:next},{...sender,url:'https://www.instagram.com/yoon_forest_/'});
+  assert.equal(result.id,1);assert.equal(s.counts().started,1);
+});
+test('계정 이동 후 이전 계정의 늦게 도착한 파일은 저장하지 않는다',async()=>{
+  const s=setup();s.setTabUrl('https://www.instagram.com/other/');
+  await assert.rejects(s.service.handle({type:'OM_START',token,item},sender),/계정/);
+  assert.equal(s.counts().started,0);
+});
+test('현재 탭 확인 실패나 외부 사이트 이동 시 파일 저장을 허용하지 않는다',async()=>{
+  for(const url of [undefined,'https://example.com/meta/']){
+    const s=setup();s.setTabUrl(url);
+    await assert.rejects(s.service.handle({type:'OM_START',token,item},sender));
+    assert.equal(s.counts().started,0);
+  }
 });

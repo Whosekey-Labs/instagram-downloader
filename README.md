@@ -8,7 +8,7 @@
 
 ## 설치
 
-1. [v0.3.2 ZIP](https://github.com/Whosekey-Labs/instagram-downloader/releases/tag/v0.3.2)을 내려받아 압축을 풉니다.
+1. [v0.3.3 ZIP](https://github.com/Whosekey-Labs/instagram-downloader/releases/tag/v0.3.3)을 내려받아 압축을 풉니다.
 2. Chrome의 `chrome://extensions`에서 **개발자 모드**를 켭니다.
 3. **압축해제된 확장 프로그램 로드**로 `manifest.json`이 있는 폴더를 선택합니다.
 4. Instagram 탭을 새로고침하고 원하는 계정의 **게시물 탭**으로 이동합니다.
