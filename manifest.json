@@ -1,14 +1,40 @@
 {
   "manifest_version": 3,
   "name": "Open Media Downloader",
-  "version": "0.2.0",
-  "description": "Instagram 프로필에서 현재 화면의 미디어를 저장하거나, 전체를 스크롤해 모은 뒤 다운로드하는 무료 오픈소스 도구입니다.",
+  "version": "0.3.0",
+  "description": "Instagram 프로필에서 현재 화면, 지정한 게시물 수, 전체 미디어를 저장하는 무료 오픈소스 도구입니다.",
   "minimum_chrome_version": "120",
-  "permissions": ["downloads", "storage"],
-  "host_permissions": ["https://www.instagram.com/*"],
-  "background": { "service_worker": "background.js", "type": "module" },
-  "action": { "default_title": "Instagram 미디어 저장 안내 열기 / 접기" },
-  "icons": { "16": "icons/16.png", "48": "icons/48.png", "128": "icons/128.png" },
-  "content_scripts": [{ "matches": ["https://www.instagram.com/*"], "js": ["content.js"], "run_at": "document_idle" }],
-  "content_security_policy": { "extension_pages": "script-src 'self'; object-src 'none'; base-uri 'none'" }
+  "permissions": [
+    "downloads",
+    "storage"
+  ],
+  "host_permissions": [
+    "https://www.instagram.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "action": {
+    "default_title": "Instagram 미디어 저장 안내 열기 / 접기"
+  },
+  "icons": {
+    "16": "icons/16.png",
+    "48": "icons/48.png",
+    "128": "icons/128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.instagram.com/*"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'none'; base-uri 'none'"
+  }
 }

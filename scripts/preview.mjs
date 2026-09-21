@@ -1,6 +1,6 @@
 import http from 'node:http';
 import {readFile} from 'node:fs/promises';
-const routes={'/sample.creator/':['tests/fixtures/profile.html','text/html; charset=utf-8'],'/fixture.js':['tests/fixtures/browser.js','text/javascript'],'/content.js':['dist/content.js','text/javascript']};
+const routes={'/another.creator/':['tests/fixtures/profile.html','text/html; charset=utf-8'],'/sample.creator/':['tests/fixtures/profile.html','text/html; charset=utf-8'],'/fixture.js':['tests/fixtures/browser.js','text/javascript'],'/content.js':['dist/content.js','text/javascript']};
 http.createServer(async(req,res)=>{
  const route=routes[new URL(req.url,'http://localhost').pathname];
  if(!route){res.writeHead(404);res.end('독립 작업 화면은 제거되었습니다. 확장을 설치하고 Instagram 프로필에서 사용하세요.');return;}

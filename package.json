@@ -1,6 +1,6 @@
 {
   "name": "open-media-downloader",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "type": "module",
   "description": "무료 오픈소스 Instagram 계정 미디어 다운로드 확장",

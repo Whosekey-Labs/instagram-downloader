@@ -47,3 +47,18 @@ test('로그인 차단이나 취소 시 전체 수집을 중단한다',async()=>
   const controller=new AbortController();controller.abort();
   await assert.rejects(collectAll({...opts,signal:controller.signal}),{name:'AbortError'});
 });
+
+test('요청한 게시물 수에 도달하면 화면 밖까지 계속 스크롤하지 않는다',async()=>{
+  let scrolls=0;
+  const result=await collectAll({read:()=>[{code:'A'},{code:'B'},{code:'C'}],scroll:()=>scrolls++,atBottom:()=>false,blocked:()=>false,wait:async()=>{},signal:new AbortController().signal,expected:100,limit:2,onProgress:()=>{}});
+  assert.deepEqual(result.posts.map(p=>p.code),['A','B']);assert.equal(result.complete,true);assert.equal(scrolls,0);
+});
+test('개수 지정 시 추가 스크롤 결과를 합쳐도 지정 개수를 넘지 않는다',async()=>{
+  let scrolls=0;
+  const result=await collectAll({read:()=>scrolls?[{code:'B'},{code:'C'},{code:'D'}]:[{code:'A'}],scroll:()=>scrolls++,atBottom:()=>false,blocked:()=>false,wait:async()=>{},signal:new AbortController().signal,expected:100,limit:3,onProgress:()=>{}});
+  assert.deepEqual(result.posts.map(p=>p.code),['A','B','C']);assert.equal(scrolls,1);
+});
+test('계정 게시물이 지정 개수보다 적으면 확인된 전체만 저장 대상으로 반환한다',async()=>{
+  const result=await collectAll({read:()=>[{code:'A'},{code:'B'}],scroll:()=>assert.fail(),atBottom:()=>true,blocked:()=>false,wait:async()=>{},signal:new AbortController().signal,expected:2,limit:20,onProgress:()=>{}});
+  assert.equal(result.posts.length,2);assert.equal(result.complete,true);
+});

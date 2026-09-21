@@ -1,7 +1,7 @@
 import {DownloadService} from './lib/download-service.js';
 const service=new DownloadService(chrome);
 chrome.runtime.onMessage.addListener((message,sender,reply)=>{
-  if(!['OM_START','OM_STATUS','OM_CANCEL','OM_CLEAR'].includes(message?.type))return false;
+  if(!['OM_START','OM_STATUS','OM_CANCEL','OM_CLEAR','OM_GET_SETTINGS','OM_SAVE_SETTINGS'].includes(message?.type))return false;
   service.handle(message,sender).then(reply,error=>reply({error:error.message||'다운로드 요청을 처리하지 못했습니다.'}));
   return true;
 });

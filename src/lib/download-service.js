@@ -1,5 +1,6 @@
 import {mediaFilename,validateMediaUrl} from './core.js';
 import {profileFromPath} from './page.js';
+import {parseDownloadCount,DEFAULT_DOWNLOAD_COUNT} from './preferences.js';
 
 export class DownloadService {
   constructor(api){this.api=api;this.chain=Promise.resolve();}
@@ -40,6 +41,18 @@ export class DownloadService {
   changed(id){return this.serial(async()=>{const jobs=await this.jobs();if(jobs[id])await this.refresh(id,jobs);});}
   handle(message,sender){return this.serial(async()=>{
     const owner=this.owner(sender);
+    if(message.type==='OM_GET_SETTINGS'){
+      const {preferences}=await this.api.storage.local.get('preferences');
+      let downloadCount=DEFAULT_DOWNLOAD_COUNT;
+      try{downloadCount=parseDownloadCount(preferences?.downloadCount);}catch{ /* 미설정 또는 손상된 값은 초기값으로 복구한다. */ }
+      return {downloadCount};
+    }
+    if(message.type==='OM_SAVE_SETTINGS'){
+      if(!owner.username)throw new Error('계정 프로필에서 기본값을 저장해 주세요.');
+      const downloadCount=parseDownloadCount(message.downloadCount);
+      await this.api.storage.local.set({preferences:{downloadCount}});
+      return {downloadCount};
+    }
     if(message.type==='OM_CLEAR'){
       if(!owner.username)throw new Error('계정 프로필에서만 저장 기록을 지울 수 있습니다.');
       const history=(await this.api.storage.local.get('completed')).completed||{};

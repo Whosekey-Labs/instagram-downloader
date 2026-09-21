@@ -47,3 +47,23 @@ test('완료 이벤트보다 다음 시작 요청이 먼저 와도 같은 파일
   const result=await s.service.handle({type:'OM_START',token,item},sender);
   assert.equal(result.skipped,true);assert.equal(s.counts().started,1);
 });
+
+test('기본 개수는 다른 계정과 워커 재시작 후에도 유지된다',async()=>{
+  const s=setup();
+  assert.equal((await s.service.handle({type:'OM_GET_SETTINGS'},sender)).downloadCount,20);
+  await s.service.handle({type:'OM_SAVE_SETTINGS',downloadCount:12},sender);
+  const restarted=new DownloadService(s.api);
+  assert.equal((await restarted.handle({type:'OM_GET_SETTINGS'},{...sender,url:'https://www.instagram.com/other/'})).downloadCount,12);
+  assert.equal(s.counts().started,0);
+});
+test('잘못된 기본 개수 저장을 거절하고 기존 값을 보존한다',async()=>{
+  const s=setup();
+  await s.service.handle({type:'OM_SAVE_SETTINGS',downloadCount:30},sender);
+  for(const downloadCount of [0,1.5,5001,null])await assert.rejects(s.service.handle({type:'OM_SAVE_SETTINGS',downloadCount},sender));
+  assert.equal((await s.service.handle({type:'OM_GET_SETTINGS'},sender)).downloadCount,30);
+});
+test('기록 삭제는 저장한 기본 개수를 지우지 않는다',async()=>{
+  const s=setup();await s.service.handle({type:'OM_SAVE_SETTINGS',downloadCount:25},sender);
+  await s.service.handle({type:'OM_CLEAR'},sender);
+  assert.equal((await s.service.handle({type:'OM_GET_SETTINGS'},sender)).downloadCount,25);
+});
