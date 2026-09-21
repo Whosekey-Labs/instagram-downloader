@@ -1,9 +1,9 @@
-# 배포 및 심사 상태 · 0.3.0
+# 배포 및 심사 상태 · 0.3.1
 
 ## 준비한 자료
 
-- `release/open-media-downloader-0.3.0.zip`: 설치 및 업로드 패키지
-- `release/open-media-downloader-0.3.0.zip.sha256`: 무결성 값
+- `release/open-media-downloader-0.3.1.zip`: 설치 및 업로드 패키지
+- `release/open-media-downloader-0.3.1.zip.sha256`: 무결성 값
 - `store/assets/icon128.png`, `promo440.png`: 아이콘 및 홍보 이미지
 - `store/assets/screenshot-inline-demo.png`: 실제 확장 UI를 예시 프로필에 띄운 검증용 이미지. 실제 Instagram 다운로드 증거가 아니며 심사 제출 전 실환경 캡처로 교체 권장
 - `store/listing.md`: 스토어 설명, 단일 목적, 권한 사유, 개인정보 선언 참고, 테스트 지침

@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Open Media Downloader",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Instagram 프로필에서 현재 화면, 지정한 게시물 수, 전체 미디어를 저장하는 무료 오픈소스 도구입니다.",
   "minimum_chrome_version": "120",
   "permissions": [
